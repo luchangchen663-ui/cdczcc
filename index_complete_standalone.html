@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UK Battery Loop // Materializing Green Capitalism</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;900&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@1,400;1,700;1,900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+                        serif: ['Playfair Display', 'ui-serif', 'Georgia', 'serif'],
+                    },
+                    colors: {
+                        'acid-green': '#ccff00',
+                        'industrial-red': '#ef4444',
+                        'bg-dark': '#0a0a0a',
+                        'panel-dark': '#111111',
+                        'border-dark': '#222222',
+                        'border-accent': '#333333',
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/css">
+        body {
+            background-color: #0a0a0a;
+            color: #f0f0f0;
+            overflow-x: hidden;
+        }
+        .massive-heading {
+            font-size: 70px;
+            font-weight: 900;
+            line-height: 0.85;
+            letter-spacing: -0.05em;
+            text-transform: uppercase;
+        }
+        @media (min-width: 768px) {
+            .massive-heading {
+                font-size: 110px;
+            }
+        }
+        .mono-label {
+            font-family: 'JetBrains Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            font-size: 10px;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #222222;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ccff00;
+        }
+        .parallax-bg {
+            background-attachment: fixed;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+
+    <script type="text/babel">
+        const { motion } = window.Motion;
+        const { useState, useEffect } = React;
+
+        // Custom SVG Icons
+        const Icon = ({ name, className = "w-5 h-5" }) => {
+            const paths = {
+                zap: <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" />,
+                arrowRight: <path d="M5 12h14m-7-7 7 7-7 7" />,
+                alertTriangle: <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3ZM12 9v4m0 4h.01" />,
+                fileText: <><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8" /></>,
+                globe: <><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" /></>
+            };
+            return (
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className={className}
+                >
+                    {paths[name]}
+                </svg>
+            );
+        };
+
+        const FadeIn = ({ children, delay = 0 }) => (
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay, ease: "easeOut" }}
+            >
+                {children}
+            </motion.div>
+        );
+
+        function App() {
+            return (
+                <div className="min-h-screen selection:bg-acid-green selection:text-black font-sans leading-relaxed">
+                    {/* 00. Navigation Overlay (Static) */}
+                    <nav className="fixed top-0 left-0 w-full z-50 p-6 flex justify-between items-center mix-blend-difference">
+                        <div className="font-mono text-sm tracking-tighter text-white">UK_BATTERY_LOOP // 2025-26</div>
+                        <div className="hidden md:flex gap-8 font-mono text-[10px] uppercase tracking-[0.2em] text-white">
+                            <a href="#production" className="hover:text-acid-green transition-colors">Production</a>
+                            <a href="#fieldwork" className="hover:text-acid-green transition-colors">Fieldwork</a>
+                            <a href="#data" className="hover:text-acid-green transition-colors">Data</a>
+                            <a href="#conclusion" className="hover:text-acid-green transition-colors">Verdict</a>
+                        </div>
+                    </nav>
+
+                    {/* 01. Hero Section */}
+                    <header className="relative min-h-[90vh] flex flex-col justify-end overflow-hidden border-b border-acid-green bg-bg-dark pt-32 p-8 md:p-12 mb-24">
+                        <div className="absolute inset-0 z-0 bg-[url('https://images.unsplash.com/photo-1594814171200-fe79b439d070?auto=format&fit=crop&q=80&w=2000')] bg-cover bg-center opacity-10 grayscale saturate-0 contrast-150" />
+                        
+                        <div className="relative z-10 w-full flex flex-col md:flex-row justify-between items-end gap-12">
+                            <div className="flex flex-col">
+                                <motion.h1 
+                                    initial={{ opacity: 0, x: -40 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ duration: 0.8 }}
+                                    className="massive-heading text-acid-green"
+                                >
+                                    Green<br />Capitalism
+                                </motion.h1>
+                                <motion.p 
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ duration: 0.8, delay: 0.4 }}
+                                    className="mt-6 text-sm font-mono tracking-widest uppercase opacity-60"
+                                >
+                                    UK Battery Governance Loop // 2025-2026 Investigation
+                                </motion.p>
+                            </div>
+
+                            <motion.div 
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.8, delay: 0.6 }}
+                                className="text-right max-w-md"
+                            >
+                                <p className="text-[10px] font-mono uppercase text-acid-green mb-3 tracking-[0.3em]">Project Abstract</p>
+                                <p className="text-xl md:text-2xl leading-snug font-light italic opacity-80 text-white/90">
+                                    A socio-technical investigation into the friction between infinite economic growth and the material reality of physical waste.
+                                </p>
+                            </motion.div>
+                        </div>
+                    </header>
+
+                    <main className="container mx-auto px-6 py-24 max-w-5xl space-y-48">
+                        
+                        {/* 00. Visualisation Logic */}
+                        <section className="border-y border-acid-green/20 py-16 relative overflow-hidden" id="visualisation-logic">
+                            <div className="absolute right-0 top-0 w-1/3 h-full opacity-5 grayscale pointer-events-none">
+                                <img src="https://i.postimg.cc/sXtJyhjQ/Wechat-IMG26415.jpg" className="object-cover h-full" alt="Decorative extract backdrop" />
+                            </div>
+                            <FadeIn>
+                                <div className="max-w-3xl relative z-10">
+                                    <p className="mono-label text-acid-green mb-4">Methodological Brief</p>
+                                    <p className="text-xl md:text-2xl font-light text-white/90 leading-relaxed italic">
+                                        This visualisation translates theoretical concepts into data-driven structures. It shows that battery recycling operates within a broader extractive system, where material flows, global inequalities, and governance mechanisms remain unchanged.
+                                    </p>
+                                    <p className="text-lg text-gray-400 mt-6">
+                                        Rather than solving ecological problems, recycling functions as a form of management within green capitalism.
+                                    </p>
+                                </div>
+                            </FadeIn>
+                        </section>
+                        
+                        {/* 01. Production Spine */}
+                        <section id="production" className="relative group">
+                            <FadeIn>
+                                <div className="flex items-end gap-3 mb-12">
+                                    <span className="text-[50px] font-serif italic text-acid-green leading-none">01.</span>
+                                    <h2 className="text-2xl font-bold uppercase tracking-tight pb-2 border-b border-border-dark flex-1">Production Spine</h2>
+                                </div>
+                            </FadeIn>
+                            
+                            <div className="grid md:grid-cols-2 gap-16 items-start text-white/70">
+                                <FadeIn delay={0.2}>
+                                    <div className="space-y-8 text-white/70 text-lg leading-relaxed">
+                                        <p>
+                                            The UK battery landscape is defined by the <span className="text-acid-green font-bold underline decoration-acid-green/50 underline-offset-4 cursor-help">Sunderland Axis</span>. 
+                                            With over <span className="text-white font-medium">£6.6 billion</span> in investment, the State has moved to 'de-risk' capital expansion under the guise of green sovereignty.
+                                        </p>
+                                        
+                                        <div className="pt-8 border-t border-border-dark space-y-4">
+                                            <h3 className="mono-label text-white text-xs">Racial Capitalism in the Anthropic Scene</h3>
+                                            <p className="text-sm opacity-80 italic">
+                                                "Following Yusoff (2018), this project defines the ‘Anthropic scene’ of the battery economy as one rooted in racialized power structures. We critique the stark contrast between the ‘clean’ aesthetics of a UK supermarket and the toxic extraction zones in the Global South."
+                                            </p>
+                                            <p className="text-[10px] uppercase tracking-widest text-acid-green/60">Ref: Yusoff (2018) / Robinson (2020)</p>
+                                        </div>
+
+                                        <a 
+                                            href="https://felt.com/map/Battery-JwhgMVLvR19BJ2vNKXY9C8DB?share=1&loc=52.721,-1.948,6.82z" 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            className="flex items-center gap-4 group/btn cursor-pointer w-fit pt-4"
+                                        >
+                                            <div className="w-12 h-12 rounded-full border border-acid-green flex items-center justify-center group-hover/btn:bg-acid-green transition-colors">
+                                                <Icon name="arrowRight" className="w-5 h-5 text-acid-green group-hover/btn:text-black transition-colors" />
+                                            </div>
+                                            <span className="mono-label text-acid-green">Logistics Map // Access Node</span>
+                                        </a>
+                                    </div>
+                                </FadeIn>
+                                
+                                <FadeIn delay={0.4}>
+                                    <div className="space-y-6">
+                                        <div className="relative group/map aspect-video bg-panel-dark border border-border-accent overflow-hidden flex items-center justify-center">
+                                            <iframe 
+                                                src="https://felt.com/embed/map/Battery-JwhgMVLvR19BJ2vNKXY9C8DB?loc=52.721,-1.948,6.82z"
+                                                width="100%"
+                                                height="100%"
+                                                title="UK Battery Logistics Map"
+                                                className="grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-700 contrast-125 saturate-50"
+                                            />
+                                            <div className="absolute top-4 left-4 p-2 border border-acid-green/30 bg-black/40 backdrop-blur-sm pointer-events-none">
+                                                <p className="mono-label text-[8px] text-acid-green">Interactive_Map: Sunderland_Giga_Axis</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="aspect-video bg-panel-dark border border-border-accent relative overflow-hidden group">
+                                            <img 
+                                                src="https://i.postimg.cc/d1MYM7Kh/IMG-8483.jpg" 
+                                                alt="Socio-technical landscape evidence" 
+                                                className="w-full h-full object-cover grayscale-[0.3] opacity-80 hover:opacity-100 hover:grayscale-0 transition-all duration-700" 
+                                            />
+                                            <div className="absolute top-4 right-4 mono-label text-[8px] text-white/40">Site_Archive: Industrial_Boundary</div>
+                                        </div>
+                                    </div>
+                                </FadeIn>
+                            </div>
+
+                            <FadeIn delay={0.6}>
+                                <blockquote className="mt-20 border-l-[3px] border-acid-green bg-panel-dark/50 p-8 md:p-12 text-xl md:text-2xl italic text-gray-300 font-light leading-relaxed relative">
+                                    <span className="absolute top-4 left-4 text-6xl text-acid-green/20 font-serif leading-none italic">"</span>
+                                    The State absorbs the risk, while the Corporation extracts the value. The battery becomes a vessel for economic survival rather than ecological repair.
+                                </blockquote>
+                            </FadeIn>
+                        </section>
+
+                        {/* 02. Fieldwork */}
+                        <section id="fieldwork">
+                            <FadeIn>
+                                <div className="flex items-end gap-3 mb-16">
+                                    <span className="text-[50px] font-serif italic text-acid-green leading-none">02.</span>
+                                    <h2 className="text-2xl font-bold uppercase tracking-tight pb-2 border-b border-border-dark flex-1">Retail Friction</h2>
+                                </div>
+                            </FadeIn>
+
+                            <div className="grid md:grid-cols-2 gap-16">
+                                 <FadeIn delay={0.2}>
+                                     <div className="aspect-[4/5] bg-panel-dark border border-border-accent overflow-hidden relative group">
+                                         <img 
+                                             src="https://i.postimg.cc/FRt4tfQs/IMG-8469.jpg" 
+                                             alt="Spatially marginalized battery recycling bin" 
+                                             className="absolute inset-0 w-full h-full object-cover grayscale-[0.3] hover:grayscale-0 transition-all duration-700"
+                                         />
+                                         <div className="absolute inset-x-0 bottom-0 bg-acid-green text-black font-bold text-xs uppercase p-4 italic z-10">
+                                             "The aesthetics of neglect ensure the primary logic of space remains consumption, not circularity."
+                                         </div>
+                                     </div>
+                                 </FadeIn>
+
+                                 <FadeIn delay={0.4}>
+                                     <div className="h-full flex flex-col justify-center gap-12">
+                                         <div className="space-y-6">
+                                                <h3 className="text-acid-green font-mono text-[11px] uppercase tracking-[0.3em] font-bold">Governmentality and the Dispositif of the Bin</h3>
+                                                <p className="text-white/80 text-xl leading-snug italic">
+                                                    “Our spatial analysis of supermarkets in Southampton utilizes Foucault’s (1991) concept of ‘Governmentality’ to interpret the recycling bin not merely as a container, but as a dispositif (apparatus).”
+                                                </p>
+                                                <p className="text-gray-400 text-lg leading-relaxed">
+                                                    Through the regulatory requirements imposed on retailers, power operates by shifting environmental responsibility away from the industrial production system and onto the micro-behaviours of individual consumers.
+                                                </p>
+                                         </div>
+                                         
+                                         <div className="p-6 bg-red-500/5 border border-red-500/20 flex gap-6 items-start">
+                                                <Icon name="alertTriangle" className="w-12 h-12 text-red-500 shrink-0 mt-1" />
+                                                <div>
+                                                        <p className="font-mono text-xs text-red-500 uppercase tracking-widest mb-2 font-bold">Technical Friction</p>
+                                                        <p className="text-sm text-gray-400">The consumer must actively "disrupt" the shopping flow to act ecologically. The architecture actively discourages this disruption.</p>
+                                                </div>
+                                         </div>
+                                     </div>
+                                </FadeIn>
+                            </div>
+
+                            {/* Video Embed */}
+                            <FadeIn delay={0.1}>
+                                <div className="mt-32 mb-16">
+                                    <div className="aspect-video w-full bg-panel-dark border border-border-accent relative overflow-hidden group/vid shadow-2xl">
+                                        <iframe 
+                                            src="https://www.youtube.com/embed/KHslVLzB8uk"
+                                            title="Field POV Investigation"
+                                            className="w-full h-full grayscale-[0.2] opacity-90 hover:opacity-100 hover:grayscale-0 transition-all duration-700"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                            allowFullScreen
+                                        />
+                                        <div className="absolute top-6 left-6 p-3 border border-acid-green/30 bg-black/60 backdrop-blur-md pointer-events-none z-10 transition-opacity group-hover/vid:opacity-0">
+                                             <p className="mono-label text-[10px] text-acid-green">Investigation_Feed: Video_Evidence_POV_S01</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </FadeIn>
+
+                            {/* Gallery Grid */}
+                            <FadeIn delay={0.2}>
+                                <div className="mt-12">
+                                    <p className="mono-label text-white text-[9px] mb-4">Spatial_Archive: Consistent_Neglect</p>
+                                    <div className="grid grid-cols-3 gap-2">
+                                        {[
+                                            "https://i.postimg.cc/FRt4tfQ9/IMG-8470.jpg",
+                                            "https://i.postimg.cc/pTNHN9tL/IMG-8471.jpg",
+                                            "https://i.postimg.cc/C1ygyZVh/IMG-8472.jpg",
+                                            "https://i.postimg.cc/cHqSqKNC/IMG-8473.jpg",
+                                            "https://i.postimg.cc/j5VbVWrL/IMG-8477.jpg",
+                                            "https://i.postimg.cc/d1MYM7Kh/IMG-8483.jpg",
+                                            "https://images.unsplash.com/photo-1594814171200-fe79b439d070?auto=format&fit=crop&q=80&w=400",
+                                            "https://images.unsplash.com/photo-1611288875204-620ca198b29c?auto=format&fit=crop&q=80&w=400",
+                                            "https://images.unsplash.com/photo-1542385151-efd9000785a0?auto=format&fit=crop&q=80&w=400"
+                                        ].map((url, i) => (
+                                            <div key={i} className="aspect-square bg-panel-dark border border-border-accent overflow-hidden group/thumb relative">
+                                                 <img 
+                                                     src={url} 
+                                                     alt={`Fieldwork evidence ${i}`} 
+                                                     className="w-full h-full object-cover grayscale-[0.5] hover:grayscale-0 transition-all cursor-crosshair" 
+                                                 />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </FadeIn>
+                        </section>
+
+                        {/* 03. Data Dashboard */}
+                        <section id="data">
+                            <FadeIn>
+                                <div className="flex items-end gap-3 mb-16">
+                                    <span className="text-[50px] font-serif italic text-acid-green leading-none">03.</span>
+                                    <h2 className="text-2xl font-bold uppercase tracking-tight pb-2 border-b border-border-dark flex-1">Physics of Failure</h2>
+                                </div>
+                            </FadeIn>
+
+                            <div className="grid md:grid-cols-3 gap-8 mb-12">
+                                <FadeIn delay={0.1}>
+                                     <div className="bg-panel-dark border border-border-accent p-6 space-y-4">
+                                         <img src="https://i.postimg.cc/j5VbVWrL/IMG-8477.jpg" alt="Field evidence loop" className="w-full grayscale-[0.3] opacity-80 hover:opacity-100 transition-opacity" />
+                                         <p className="mono-label text-[8px]">Visual_Evidence: Circular_Myth</p>
+                                     </div>
+                                </FadeIn>
+                                <FadeIn delay={0.2}>
+                                     <div className="bg-panel-dark border border-border-accent p-6 space-y-4">
+                                         <img src="https://i.postimg.cc/76vkvCyz/IMG-8488.jpg" alt="Field evidence extraction" className="w-full grayscale-[0.3] opacity-80 hover:opacity-100 transition-opacity" />
+                                         <p className="mono-label text-[8px]">Visual_Evidence: Extraction_Scale</p>
+                                     </div>
+                                </FadeIn>
+                                <FadeIn delay={0.3}>
+                                     <div className="bg-panel-dark border border-border-accent p-6 space-y-4">
+                                         <img src="https://i.postimg.cc/Y9cHc4wW/IMG-8489.jpg" alt="Governance Evidence" className="w-full grayscale-[0.3] opacity-80 hover:opacity-100 transition-opacity" />
+                                         <p className="mono-label text-[8px]">Visual_Evidence: Governance_Residual</p>
+                                     </div>
+                                </FadeIn>
+                            </div>
+
+                            {/* Trace History */}
+                            <div className="mt-8 mb-16">
+                                <p className="mono-label text-white text-[9px] mb-4">Data_Validation: Physical_Residual_Archive</p>
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    {[
+                                        { url: "https://i.postimg.cc/sXtJyhjQ/Wechat-IMG26415.jpg", label: "Trace_01: Extraction_Logic" },
+                                        { url: "https://i.postimg.cc/Jn9Qmkrs/Wechat-IMG26418.jpg", label: "Trace_02: Material_Friction" },
+                                        { url: "https://i.postimg.cc/0QLCxwk6/Wechat-IMG26422.jpg", label: "Trace_03: Logistical_Void" },
+                                        { url: "https://i.postimg.cc/63DhwvWT/Wechat-IMG26424.jpg", label: "Trace_04: Systemic_Residual" }
+                                    ].map((img, i) => (
+                                        <FadeIn key={i} delay={0.1 * i}>
+                                            <div className="group relative aspect-square bg-panel-dark border border-border-accent overflow-hidden">
+                                                <img 
+                                                    src={img.url} 
+                                                    alt={img.label}
+                                                    className="w-full h-full object-cover grayscale-[0.4] group-hover:grayscale-0 transition-all duration-500"
+                                                />
+                                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
+                                                    <p className="mono-label text-[8px] text-acid-green">{img.label}</p>
+                                                </div>
+                                            </div>
+                                        </FadeIn>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Data Table */}
+                            <FadeIn delay={0.5}>
+                                <div className="border border-border-accent bg-panel-dark">
+                                    <table className="w-full text-left font-mono border-collapse text-xs md:text-sm">
+                                        <thead>
+                                            <tr className="bg-bg-dark border-b border-acid-green/30">
+                                                <th className="p-6 text-[10px] uppercase tracking-[0.3em] text-acid-green font-bold">Metric</th>
+                                                <th className="p-6 text-[10px] uppercase tracking-[0.3em] text-acid-green font-bold">Status</th>
+                                                <th className="p-6 text-[10px] uppercase tracking-[0.3em] text-acid-green font-bold">Interpretation</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-border-dark">
+                                            <tr className="group hover:bg-white/5 transition-colors">
+                                                <td className="p-6 text-white/60">Market Placement</td>
+                                                <td className="p-6 font-bold text-red-500">+12% YoY</td>
+                                                <td className="p-6 text-white/40 italic text-[10px]">Infinite expansion of commodity production.</td>
+                                            </tr>
+                                            <tr className="group hover:bg-white/5 transition-colors">
+                                                <td className="p-6 text-white/60">Collection Rate</td>
+                                                <td className="p-6 text-white">45.11%</td>
+                                                <td className="p-6 text-white/40 italic text-[10px]">The physical bottleneck of responsibility.</td>
+                                            </tr>
+                                            <tr className="group hover:bg-white/5 transition-colors">
+                                                <td className="p-6 text-white/60">Governance Void</td>
+                                                <td className="p-6 text-acid-green font-bold">CRITICAL</td>
+                                                <td className="p-6 text-white/40 italic text-[10px]">Systemic blindspot in waste stream.</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </FadeIn>
+                        </section>
+
+                        {/* 04. Conclusion */}
+                        <section id="conclusion" className="pb-32">
+                            <FadeIn>
+                                <div className="flex items-center gap-4 mb-16">
+                                    <div className="p-3 bg-white/10 rounded-full">
+                                        <Icon name="globe" className="w-6 h-6 text-white" />
+                                    </div>
+                                    <h2 className="text-3xl md:text-4xl font-medium tracking-tight">04. Beyond the Map</h2>
+                                </div>
+                            </FadeIn>
+
+                            <div className="max-w-3xl space-y-12">
+                                <FadeIn delay={0.2}>
+                                    <div className="space-y-8">
+                                        <p className="text-2xl font-light text-gray-300 leading-relaxed">
+                                            The <span className="text-red-500 font-medium italic underline decoration-red-500/30 underline-offset-8">55% of batteries</span> that vanish from the data stream are not truly 'gone.' 
+                                            They represent the externalized costs of Green Capitalism.
+                                        </p>
+                                        <div className="grid grid-cols-2 gap-4 aspect-[2/1]">
+                                             <img src="https://i.postimg.cc/Y9cHc4wW/IMG-8489.jpg" className="w-full h-full object-cover grayscale-[0.3] opacity-80 hover:opacity-100 transition-opacity" alt="Archive A" />
+                                             <img src="https://i.postimg.cc/fL4N43hm/IMG-8509.jpg" className="w-full h-full object-cover grayscale-[0.3] opacity-80 hover:opacity-100 transition-opacity" alt="Archive B" />
+                                        </div>
+                                        <p className="text-lg text-gray-400">
+                                            Whether they end up in the Southampton Port for export or in domestic landfills, they constitute a 'governance blind spot.'
+                                        </p>
+                                    </div>
+                                </FadeIn>
+                            </div>
+                        </section>
+
+                    </main>
+
+                    {/* Verdict Bar */}
+                    <div className="fixed bottom-0 left-0 w-full h-16 bg-acid-green text-black z-50 flex items-center px-8 justify-between">
+                        <span className="font-black uppercase tracking-widest text-xs md:text-sm">Verdict 2026: Externalized Costs of Expansion</span>
+                        <div className="hidden md:flex gap-4">
+                            <span className="border border-black px-2 py-1 text-[10px] font-mono font-bold">55% DATA BLINDSPOT</span>
+                            <span className="bg-black text-acid-green px-2 py-1 text-[10px] font-mono font-bold italic uppercase">S-M AXIS: ALERT</span>
+                        </div>
+                    </div>
+
+                    {/* Footer */}
+                    <footer className="border-t border-border-dark bg-black py-24 px-6 overflow-hidden relative">
+                        <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
+                             <Icon name="zap" className="w-64 h-64 text-acid-green" />
+                        </div>
+                        
+                        <div className="container mx-auto max-w-5xl">
+                            <div className="grid md:grid-cols-2 gap-24">
+                                <div className="space-y-12">
+                                    <div className="flex items-center gap-3">
+                                        <Icon name="fileText" className="w-5 h-5 text-gray-500" />
+                                        <h3 className="mono-label text-gray-300">Bibliography & Theoretical Framework</h3>
+                                    </div>
+                                    <ul className="space-y-6 text-sm text-gray-500 font-light">
+                                        <li><span className="block text-gray-300 font-normal uppercase tracking-wider text-[10px] mb-1">Governmentality</span> Foucault, M. (1991) 'Governmentality'.</li>
+                                        <li><span className="block text-gray-300 font-normal uppercase tracking-wider text-[10px] mb-1">Anthropic Scene</span> Yusoff, K. (2018) <i>A Billion Black Anthropocenes</i>.</li>
+                                        <li><span className="block text-gray-300 font-normal uppercase tracking-wider text-[10px] mb-1">Extractive Zone</span> Gómez-Barris, M. (2017) <i>The Extractive Zone</i>.</li>
+                                    </ul>
+                                </div>
+
+                                <div className="flex flex-col justify-between">
+                                    <div>
+                                        <div className="text-acid-green font-mono text-3xl tracking-tighter mb-4">MATERIALIZING_GC</div>
+                                        <p className="text-gray-500 text-xs font-mono uppercase tracking-widest">All rights reserved // 2026</p>
+                                    </div>
+                                    <p className="text-[10px] font-mono text-gray-600 leading-relaxed uppercase tracking-widest mt-12 bg-white/5 p-4 border-l border-white/10">
+                                        This investigation was produced independently. No industrial capital was used to de-risk the research.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
